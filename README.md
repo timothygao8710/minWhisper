@@ -52,6 +52,9 @@ More are avaliable at: https://github.com/openai/whisper/blob/main/whisper/__ini
 
 Ran on MacBook Pro M2 Pro, 2023
 
+Example.wav output: ```
+<|startoftranscript|><|notimestamps|> The little tales they tell are false. The door was barred, locked and bolted as well. Right pears are fit for a queen's table. A big wet stain was on the round carpet. The kite dipped and swayed but stayed aloft. The pleasant hours fly by much too soon. The room was crowded with a```
+
 # Model Architecture
 
 <img width="887" height="665" alt="Screenshot 2026-06-06 at 1 43 22 AM" src="https://github.com/user-attachments/assets/864d6076-e5b7-4904-870b-21dcbb9bc2a6" />
