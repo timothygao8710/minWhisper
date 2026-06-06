@@ -8,6 +8,26 @@ https://github.com/user-attachments/assets/f1fbdad8-87c0-4d1b-bebc-2f9301481574
 - Supports any model size in the Whisper family, batched inference, and different audio formats
 - Details like layernorm and approximate gelu differ slightly from huggingface's implementation to prefer conciseness
 
+```
+Compare to main.py, the key changes in main_kv.py are
+
++ kv_cache = {}
+
++ if name not in kv_cache: 
+        kv_cache[name] = np.array([kv_x @ W_k.T, kv_x @ W_v.T + B_v]) # prefill
+    elif is_casual:
+        kv_cache[name], _ = pack([kv_cache[name], np.array([kv_x @ W_k.T, kv_x @ W_v.T + B_v])], 'm b * c') # decode
+        is_casual = False # casual attention reduces to cross attention
+
+Implements KV cache for cross attention (prefill-only), and decode in masked attention by viewing it as cross attention with one query
+
+And of course
+
+tokens_input, _ = pack([tokens_input, x[:, -1:]], 'b *') --> tokens_input = x[:, -1:]
+
+Is what actually buys us the reduction in complexity, by only doing the "new" work incurred for each new token
+```
+
 # Quickstart
 
 1. Download any choice of model checkpoint:

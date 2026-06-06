@@ -2,9 +2,6 @@ import numpy as np
 from einops import *
 from tqdm import trange
 
-import time
-start_time = time.time()
-
 import torch
 whisper_weights = torch.load('tiny.pt')
 del torch # We only use torch for loading the state dict
@@ -152,8 +149,6 @@ for tok in trange(max_gen_toks, desc="Text Decoder - Num Output Tokens"):
 
     tokens_input = x[:, -1:] # O(N^3) -> O(N^2) attention with KV Caching & compute-bound -> BW-bound
     res, _ = pack([res, tokens_input], 'b *')
-
-print(f"{time.time() - start_time:.3f}")  # milliseconds
 
 ### END OF TEXT DECODER ###
 
