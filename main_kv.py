@@ -33,6 +33,8 @@ def ln(x, name):
     x = x / (np.std(x, axis=-1, keepdims=True) + 1e-9)
     return W * x + b
 
+kv_cache = {}
+
 def attn(q_x, kv_x, name, is_casual=False):
     # We need 
     # - full self attention (in encoder)
@@ -49,10 +51,14 @@ def attn(q_x, kv_x, name, is_casual=False):
 
     if kv_x is None: 
         kv_x = q_x # Not cross attention
-    
-    K, V = kv_x @ W_k.T, kv_x @ W_v.T + B_v 
 
-    K, V = rearrange([K, V], 'm b kt (n_heads c) -> m b n_heads kt c', n_heads = n_heads)
+    if name not in kv_cache: 
+        kv_cache[name] = np.array([kv_x @ W_k.T, kv_x @ W_v.T + B_v]) # prefill
+    elif is_casual:
+        kv_cache[name], _ = pack([kv_cache[name], np.array([kv_x @ W_k.T, kv_x @ W_v.T + B_v])], 'm b * c') # decode
+        is_casual = False # casual attention reduces to cross attention
+
+    K, V = rearrange(kv_cache[name], 'm b kt (n_heads c) -> m b n_heads kt c', n_heads = n_heads)
     Q = rearrange(Q, 'b qt (n_heads c) -> b n_heads qt c', n_heads = n_heads) # Q time dim may be diff from KV time dim for cross attn
 
     scores = einsum(Q, K, 'b n qt c, b n kt c -> b n qt kt') # contract feature dim
@@ -129,6 +135,7 @@ for tok in trange(max_gen_toks, desc="Text Decoder - Num Output Tokens"):
     x = vocab[tokens_input]
     _, T, _ = x.shape
     x += pos_embed[:T, :]
+    pos_embed = pos_embed[T:]
 
     for i in range(n_layers):
         x = attn(x, None, f'decoder.blocks.{i}.attn', is_casual=True)
@@ -143,8 +150,8 @@ for tok in trange(max_gen_toks, desc="Text Decoder - Num Output Tokens"):
     if np.all(x[:, -1:] == EOS_ID):
         break
 
-    tokens_input, _ = pack([tokens_input, x[:, -1:]], 'b *')
-    res = tokens_input
+    tokens_input = x[:, -1:] # O(N^3) -> O(N^2) attention with KV Caching & compute-bound -> BW-bound
+    res, _ = pack([res, tokens_input], 'b *')
 
 print(f"{time.time() - start_time:.3f}")  # milliseconds
 
