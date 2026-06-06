@@ -2,7 +2,14 @@
 
 This repo implements all of OpenAI Whisper's forward pass in under 150 lines of Numpy using Einsum / Einops.
 
-https://github.com/user-attachments/assets/f1fbdad8-87c0-4d1b-bebc-2f9301481574
+Example.mp3:
+
+https://github.com/user-attachments/assets/69234854-bc08-4377-90cc-1044f016d568
+
+
+
+Transcription (tiny model): ```
+<|startoftranscript|><|notimestamps|> The little tales they tell are false. The door was barred, locked and bolted as well. Right pears are fit for a queen's table. A big wet stain was on the round carpet. The kite dipped and swayed but stayed aloft. The pleasant hours fly by much too soon. The room was crowded with a```
 
 - KV cache is 7 lines on top of main.py (O(seq_len ^ 3) -> O(seq_len ^ 2))
 - Supports any model size in the Whisper family, batched inference, and different audio formats
@@ -48,12 +55,10 @@ More are avaliable at: https://github.com/openai/whisper/blob/main/whisper/__ini
 
 # KV Cache Benchmarks
 
-<img width="600" alt="inference_benchmark" src="https://github.com/user-attachments/assets/745eff2a-e89a-45fd-8e7e-4511e6a51739" />
+
+<img width="600" alt="inference_benchmark" src="https://github.com/user-attachments/assets/0402e314-a96f-4937-bd0a-aea176e7cc3e" />
 
 Ran on MacBook Pro M2 Pro, 2023
-
-Example.wav output on tiny.py: ```
-<|startoftranscript|><|notimestamps|> The little tales they tell are false. The door was barred, locked and bolted as well. Right pears are fit for a queen's table. A big wet stain was on the round carpet. The kite dipped and swayed but stayed aloft. The pleasant hours fly by much too soon. The room was crowded with a```
 
 # Model Architecture
 
