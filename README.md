@@ -32,9 +32,10 @@ More are avaliable at: https://github.com/openai/whisper/blob/main/whisper/__ini
 
 Ran on MacBook Pro M2 Pro, 2023
 
-# Model Architecture Implemented
+# Model Architecture
 
-<img width="648" alt="whisper_model" src="https://github.com/user-attachments/assets/e748d28e-797f-43fa-80a6-d761e41211ab" />
+<img width="887" height="665" alt="Screenshot 2026-06-06 at 1 43 22 AM" src="https://github.com/user-attachments/assets/864d6076-e5b7-4904-870b-21dcbb9bc2a6" />
+
 
 From https://cdn.openai.com/papers/whisper.pdf
 
